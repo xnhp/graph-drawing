@@ -1,0 +1,148 @@
+\documentclass[10pt,twocolumn]{article}
+
+
+\usepackage[utf8]{inputenc}
+
+\usepackage{zsfgv}
+\usepackage{lipsum}
+\usepackage{multicol}
+
+\begin{document}
+
+\part{Complexity Measures}
+
+\section{Deterministic measures}
+
+Let $T$ be an algorithm type. For an algorithm $A$ of type $T$, it must be
+defined, on input $x$
+\begin{itemize}
+\item when $A$ terminates
+\item what the result is
+\end{itemize}
+
+An algorithm $A$ of type $T$ \ild{computes} a mapping $\varphi_A: (\Sigma^*)^m
+\rightarrow \Sigma^*$ with
+\begin{align*}
+  \varphi_A(x) :=
+  \begin{cases}
+    \text{result of $A$ on $x$} & \text{if $A$ terminates} \\
+    \text{undefined} & \text{otherwise}
+  \end{cases}
+\end{align*} 
+
+\paragraph{\ild{Def.}} A \ild{complexity measure} for $A$ of type $T$ is a mapping
+\begin{align*}
+  \Phi : \text{finite computation of $A$ of type $T$ on $x$} \mapsto r \in \nn
+\end{align*}
+
+
+\paragraph{\ile{Ex.}} examples for $\Phi$ are $T$-\textsc{DTIME}, $T$-\textsc{DSPACE}
+
+\paragraph{\ild{Def.}} A \ild{complexity function} of $A$ of type $T$ is a
+mapping $\Phi_A: (\Sigma^*)^M \rightarrow \nn$ with
+\begin{align*}
+  \Phi_A(x) :=
+  \begin{cases}
+    \Phi(\text{computation of $A$ on $x$})& \text{if $A$ terminates} \\
+    \text{undefined} & \text{otherwise}
+  \end{cases}
+\end{align*} 
+
+\paragraph{\ild{Def.}} \ild{worst-case complexity function}: $\Phi_A : \nn
+\rightarrow \nn$ with
+\begin{align*}
+  \Phi_A(n) := \max_{\abs{x}=n} \Phi_A(x)
+\end{align*}
+\note{``worst'' complexity of all inputs of this length}
+
+\paragraph{\ild{Def.}} Algorithm $A$ of type $T$ \ild{computes} $f$ \ild{in
+  $\Phi$-complexity} $t$ iff
+\begin{align*}
+\text{
+  $\varphi_A=f$ and $\Phi_A \leq_{ac} t$
+  }
+\end{align*}
+
+\paragraph{\ile{Note}}
+\begin{itemize}
+\item If not specified, an ``algorithm'' is short for "algorithm $A$ of type
+  $T$".
+\item Alphabets are arbitrary but finite
+\item Numbers are encoded dyadically
+\end{itemize}
+
+\paragraph{\ile{Ex.}} Some complexity classes of \textit{functions}:
+\begin{itemize}
+\item $F \Phi(t) := \{ f ~|~ \text{$f$ is total function and there ex. alg. $A$
+    of type $T$ computing $f$ in $\Phi$-complexity $t$}\}$
+\item $F \Phi( \mathcal{O}(t) ) := \bigcup_{k \geq 1} F \Phi (k \cdot t)$
+\item $F \Phi( \text{Pol~} t ) := \bigcup_{k \geq 1} F \Phi(t^k)$
+\end{itemize}
+
+\paragraph{\ile{Ex.}} Complexity classes of \textit{languages}:
+\begin{itemize}
+\item $\Phi(t) := \{ L ~|~  \text{$L \subseteq \Sigma^*$ and there ex. alg.
+    accepting $L$ in $\Phi$-complexity $t$} \}$
+\item $\Phi(\mathcal{O}(t))$ similar to definition for functions
+\item $\Phi( \text{Pol~} t)$ likewise
+\end{itemize}
+
+We now turn to complexity measures for Turing Machines.
+\begin{itemize}
+\item TMs are characterised by one read-only input tape, an arbitrary number of
+  working tapes and a write-only output tape. The input tape can be
+  \ild{one-way} infite or \ild{two-way} infinite.
+\item The \ild{input} is the full initial configuration of input tape and all
+  other tapes.
+\item If a TM $M$ stops, the output is given by the leftmost consecutive word on
+  the output tape.
+\end{itemize}
+\paragraph{\ild{Def}} Algorithm types for turing machines:
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{img/1.1-algtypes}
+\end{figure}
+
+\paragraph{\ild{Def}} Let $M$ be a $T$-TM, let $\beta$ be a computation of
+$M(x)$.
+\begin{itemize}
+\item \tdtime{$\beta$} $:=$ number of steps of $\beta$
+\item \tdtime{$\beta$} $:=$ number of cells of write tape visited (or non-empty)
+\end{itemize}
+We can define complexity classes based on the characteristics of the employed
+TM:
+\begin{align*}
+  (F)
+  \left\{
+  \begin{tabular}{@{}l@{}}
+    0 \\ 1 \\ 2
+  \end{tabular}
+  \right\}
+  -
+  \left\{
+  \begin{tabular}{@{}l@{}}
+    $T$ \\ $kT$ \\ $\text{multi}T$
+  \end{tabular}
+  \right\}
+  -
+  \left\{
+  \begin{tabular}{@{}l@{}}
+    \text{\textsc{dtime}} \\
+    \text{\textsc{dspace}}
+  \end{tabular}
+  \right\}
+  (r)
+\end{align*}
+
+\paragraph{\ile{Ex.}}
+\begin{itemize}
+\item $\text{len}:x\mapsto \abs{x} \in F1-$\tdtime{$( 1+\varepsilon )n$} for all
+  $\varepsilon > 0$, where $\abs{x}=n$
+\end{itemize}
+
+
+
+
+
+\end{document}
