@@ -3,142 +3,167 @@
 
 \usepackage[utf8]{inputenc}
 
-\usepackage{zsfgv}
+\usepackage{lecture-notes-template/zsfgv}
 \usepackage{lipsum}
 \usepackage{multicol}
 
 \begin{document}
 
-\part{Complexity Measures}
+\setcounter{section}{6}
+\section{$st$-ordering \& incremental orthogonal drawing}
 
-\section{Deterministic measures}
+\paragraph{\ild{Topological ordering}} of a \textit{directed} graph is an
+ordering so that for each $(u,v) \in E$, $u$ comes before $v$ in the ordering.
 
-Let $T$ be an algorithm type. For an algorithm $A$ of type $T$, it must be
-defined, on input $x$
+\paragraph{\ild{$st$-ordering}} is an ordering of the vertex set s.t. each $v_j$
+for $2 \leq j \leq n-1$ has at least one neighbour $v_i$ with $i<j$ and a
+neighbour $v_k$ with $k > j$.
+
+\paragraph{\thm{Thm}} Let $G$ biconnected. Then, for given $s, t \in V$, an
+$st$-ordering can be computed in linear time.
+\proof{
+  \begin{enumerate}
+  \item Orient edges of $G$ to create an $s-t$-graph $G_{st}$ by calculating an
+    oriented open ear decomposition.
+  \item The topological numbering of $G_{st}$ is then an $st$-ordering.
+  \end{enumerate}
+}
+
+\paragraph{\ild{Open ear decomposition}} $D=(P_0, ..., P_r)$ of an undirected
+graph is a partition of $E$ into an ordered collection of edge-disjoint paths
+s.t.
 \begin{itemize}
-\item when $A$ terminates
-\item what the result is
+\item $P_0$ is an edge
+\item $P_0 \cup P_1$ is a simple cycle
+\item both end vertices of $P_i$ are in $P_0 \cup ... \cup P_{i-1}$
+\item no internal vertex of $P_i$ is in $P_0 \cup ... \cup P_{i-1}$
+\end{itemize}
+\textbf{Computation}: Perform a DFS. Ears will be ${s,t}$, and backwards edges and suffixes
+of the spanning tree path leading up to the backwards edge. Orient edges like
+other edge at ``source'' node of backwards edge.
+%image: 07-7-15.png
+
+
+
+
+\paragraph{\ila{alg} } (Incremental orthogonal drawing) Prerequisites: max
+degree 4.
+
+
+\setcounter{section}{7}
+\section{Straightline drawings \& canonical ordering}
+
+
+\paragraph{\ild{Canonical Ordering}} (cf. $st$-ordering) of a triangulated graph
+is an ordering of the vertex set $V$, s.t.
+\begin{itemize}
+\item $v_1, v_2, v_n$ are on the outer face
+\item for any $v_j$, $j \in \{3, ..., n-1\}$, it is adjacent to
+  \begin{enumerate}
+  \item at least two vertices with a lower index, \textcolor{gray}{and}
+  \item at least one vertex with a higher index.
+  \end{enumerate}
+\end{itemize}
+\textbf{Computation}: (\textit{``peeling order''}) For $k=n, ..., 3$, pick $v_k$ from
+$\partial(G_k) \backslash \{v_1, v_2\}$ so that $v_k$ not incident to a chord in
+$\partial(G_k)$ \iln{(because else if incident to cord, i.e. triangle with two edges in
+  $\partial (G_k)$ $\rightarrow$ removing leaves only one edge in
+  $\partial(G_k)$)}. \textbf{Existence}: minimal chord (extreme case: triangle) has at
+least one vertex in $\partial(G_k)$ that is not part of a chord.
+
+\paragraph{\thm{Thm.}} A canonical ordering of a triangulated planar graph can
+be computed in linear time. \gray{i.e. can pick chord-free vertices in linear time}.
+\proof{
+  \begin{itemize}
+  \item counter \textsc{Chords}$(v)$ for $v \in \partial(G_k)$
+  \item list \textsc{Chordfree} to consider
+  \end{itemize}
+  Pop vertex from \textsc{Chordfree}, update counter of neighbours: total runtime $\bigO(\sum
+  \mathit{deg}(v)) = \bigO(2m)$. Insert vertex into \textsc{Chordfree} if counter
+  is 0.
+}\\
+
+Let $G_j$ be the graph induced by $\{v_1, ..., v_j\}$.
+
+\paragraph{\thm{Prop.}} $v_{j+1}$ is on the outer face of $G_j$. \proof{ There
+  ex. path $P$ from $v_{j+1}$ to $v_n$ whose internal vertices come after $v_{j+1}$
+  in the ordering, in particular $P$ does not contain vertices of $G_j$! ---
+  $v_n$ is on the outer face of $G$ and thus of $G_j$. --- Assume $v_{j+1}$ is
+  in an inner face: In any embedding, $P$ has to cross the boundary of $G_j$,
+  and this cannot happen in a vertex. Hence, we have an edge crossing,
+  contradiction to planary of $G$.
+}
+
+\paragraph{\thm{Prop}} Edges connecting $v_j$ to $G_j$ are consecutive among the
+edges connecting $G_j$ to $G \backslash G_j$ \note{(i.e. there is no edge in
+  between that is incident to $w \in G \backslash G_j$)}. \proof{Follows from
+  the above proof.}
+
+% image: 07-3-4.png
+
+\paragraph{\thm{Prop.}} If $G$ is triangulated, the boundary $\partial(G_j)$ is
+a simple cycle. \proof{Induction.}
+
+\paragraph{\ile{Applications}}
+\begin{itemize}
+\item Kandinsky Drawings
+\item Straighline drawings for planar graphs
 \end{itemize}
 
-An algorithm $A$ of type $T$ \ild{computes} a mapping $\varphi_A: (\Sigma^*)^m
-\rightarrow \Sigma^*$ with
-\begin{align*}
-  \varphi_A(x) :=
-  \begin{cases}
-    \text{result of $A$ on $x$} & \text{if $A$ terminates} \\
-    \text{undefined} & \text{otherwise}
-  \end{cases}
-\end{align*} 
+\subsection{Straightline drawings for planar graphs}
 
-\paragraph{\ild{Def.}} A \ild{complexity measure} for $A$ of type $T$ is a mapping
-\begin{align*}
-  \Phi : \text{finite computation of $A$ of type $T$ on $x$} \mapsto r \in \nn
-\end{align*}
+\textsc{Shift}-Algorithm of {Fraysseix-Pach-Pollack}.
 
-
-\paragraph{\ile{Ex.}} examples for $\Phi$ are $T$-\textsc{DTIME}, $T$-\textsc{DSPACE}
-
-\paragraph{\ild{Def.}} A \ild{complexity function} of $A$ of type $T$ is a
-mapping $\Phi_A: (\Sigma^*)^M \rightarrow \nn$ with
-\begin{align*}
-  \Phi_A(x) :=
-  \begin{cases}
-    \Phi(\text{computation of $A$ on $x$})& \text{if $A$ terminates} \\
-    \text{undefined} & \text{otherwise}
-  \end{cases}
-\end{align*} 
-
-\paragraph{\ild{Def.}} \ild{worst-case complexity function}: $\Phi_A : \nn
-\rightarrow \nn$ with
-\begin{align*}
-  \Phi_A(n) := \max_{\abs{x}=n} \Phi_A(x)
-\end{align*}
-\note{``worst'' complexity of all inputs of this length}
-
-\paragraph{\ild{Def.}} Algorithm $A$ of type $T$ \ild{computes} $f$ \ild{in
-  $\Phi$-complexity} $t$ iff
-\begin{align*}
-\text{
-  $\varphi_A=f$ and $\Phi_A \leq_{ac} t$
-  }
-\end{align*}
-
-\paragraph{\ile{Note}}
+\paragraph{\textit{Basic Idea}}
 \begin{itemize}
-\item If not specified, an ``algorithm'' is short for "algorithm $A$ of type
-  $T$".
-\item Alphabets are arbitrary but finite
-\item Numbers are encoded dyadically
+\item Suffices to consider triangular graphs (else triangulate, layout, then
+  remove added edges)
+\item Construct drawing step-by-step by incrementally adding a single vertex and
+  its incident edges, potentially shifting the rest of the graph s.t. no
+  crossings appear.
 \end{itemize}
 
-\paragraph{\ile{Ex.}} Some complexity classes of \textit{functions}:
+\paragraph{\ila{Alg} } (\textsc{Shift}-Algorithm)
+\begin{enumerate}
+\item Begin with one triangle, place $v_1$ on $(0,0)$, $v_2$ on $(2,0)$ and $v_3$
+  on $(1,1)$. \iln{(slopes on outer face always $-1$, $1$)}
+\item According to canonical ordering, add a new vertex $v_k$. Let $v_l$ be its
+  leftmost (first on $P$) adjacent neighbour, $v_r$ the rightmost. Add $v_k$ in
+  center s.t. slopes on outer face are unity.
+\item To avoid edge overlaps, move $v_l$, $v_r$ and all nodes left (resp. right)
+  further away. \iln{(Consequently, $v_k$ will be placed higher up)}
+\end{enumerate}
+
 \begin{itemize}
-\item $F \Phi(t) := \{ f ~|~ \text{$f$ is total function and there ex. alg. $A$
-    of type $T$ computing $f$ in $\Phi$-complexity $t$}\}$
-\item $F \Phi( \mathcal{O}(t) ) := \bigcup_{k \geq 1} F \Phi (k \cdot t)$
-\item $F \Phi( \text{Pol~} t ) := \bigcup_{k \geq 1} F \Phi(t^k)$
+\item Edges from $v_k$ to $w \in G_{k-1}$ can not create crossings with edges in
+  $\partial(G_{k-1})$ \proof{Slope of $f \in \partial(G_{k-1}) \leq 1$ always
+    and slope of other $e \geq 1$. Because $x$-coordinates are monotonous, there
+  cannot be such an edge because there cannot be an endpoint at the implied position.}
+\item $v_k$ is on a grid point if $x+y$ is even (because slope 1).
+\item We have shown that newly added part does not introduce crossing. Now still
+  have to show that shifting does not introduce new crossings on the inside,
+  i.e. in $G_{k-1}$. We distinguish cases defined by the leftmost vertex to be shifted.
+  \begin{itemize}
+  \item For vertices $v \not= v_k$, it must necessarily be some $v \in
+    \partial(G_{k-1})$ by construction of the algorithm (do use nodes that
+    are adjacent to $v_k$ except for $v_l$ and $v_r$). Can directly apply IH.
+  \item For $v = v_k$, using it as target for shift is the same as using the
+    second-to-leftmost adjacent $v'$. But this is the same case as for $G_{k-1}$.
+  \item Shifting edges incident to $v_k$ does not introduce crossings because
+    they and their neighbourhood move rigidly with $v_k$.
+  \end{itemize}
 \end{itemize}
 
-\paragraph{\ile{Ex.}} Complexity classes of \textit{languages}:
-\begin{itemize}
-\item $\Phi(t) := \{ L ~|~  \text{$L \subseteq \Sigma^*$ and there ex. alg.
-    accepting $L$ in $\Phi$-complexity $t$} \}$
-\item $\Phi(\mathcal{O}(t))$ similar to definition for functions
-\item $\Phi( \text{Pol~} t)$ likewise
-\end{itemize}
+\paragraph{\thm{Prop.}} Manhattan distance between two vertices on
+$\partial(G_k)$ is even. \proof{Distance remains or increases by two}
 
-We now turn to complexity measures for Turing Machines.
+\paragraph{\thm{Prop.}} \textsc{Shift} runs in linear time.
 \begin{itemize}
-\item TMs are characterised by one read-only input tape, an arbitrary number of
-  working tapes and a write-only output tape. The input tape can be
-  \ild{one-way} infite or \ild{two-way} infinite.
-\item The \ild{input} is the full initial configuration of input tape and all
-  other tapes.
-\item If a TM $M$ stops, the output is given by the leftmost consecutive word on
-  the output tape.
-\end{itemize}
-\paragraph{\ild{Def}} Algorithm types for turing machines:
-
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=\linewidth]{img/1.1-algtypes}
-\end{figure}
-
-\paragraph{\ild{Def}} Let $M$ be a $T$-TM, let $\beta$ be a computation of
-$M(x)$.
-\begin{itemize}
-\item \tdtime{$\beta$} $:=$ number of steps of $\beta$
-\item \tdtime{$\beta$} $:=$ number of cells of write tape visited (or non-empty)
-\end{itemize}
-We can define complexity classes based on the characteristics of the employed
-TM:
-\begin{align*}
-  (F)
-  \left\{
-  \begin{tabular}{@{}l@{}}
-    0 \\ 1 \\ 2
-  \end{tabular}
-  \right\}
-  -
-  \left\{
-  \begin{tabular}{@{}l@{}}
-    $T$ \\ $kT$ \\ $\text{multi}T$
-  \end{tabular}
-  \right\}
-  -
-  \left\{
-  \begin{tabular}{@{}l@{}}
-    \text{\textsc{dtime}} \\
-    \text{\textsc{dspace}}
-  \end{tabular}
-  \right\}
-  (r)
-\end{align*}
-
-\paragraph{\ile{Ex.}}
-\begin{itemize}
-\item $\text{len}:x\mapsto \abs{x} \in F1-$\tdtime{$( 1+\varepsilon )n$} for all
-  $\varepsilon > 0$, where $\abs{x}=n$
+\item $y$-coordinates can be computed from canonical ordering.
+\item for $x$-coordinates (of $v_k$) maintain a forest of \textit{rigid edges}
+  (middle edges that never appear in the boundary) % image: 08-5-21.png
+  \note{( such a tree is always shifted as one (per definition) )} and boundary
+  edges of current $G_j$.
 \end{itemize}
 
 
