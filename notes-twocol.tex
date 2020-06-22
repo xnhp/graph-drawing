@@ -101,6 +101,10 @@ edges connecting $G_j$ to $G \backslash G_j$ \note{(i.e. there is no edge in
 
 % image: 07-3-4.png
 
+
+\paragraph{\iln{Note}} When peeling, a vertex has at least two neighbours in the
+remaining graph. %mentioned in lec09
+
 \paragraph{\thm{Prop.}} If $G$ is triangulated, the boundary $\partial(G_j)$ is
 a simple cycle. \proof{Induction.}
 
@@ -166,6 +170,79 @@ $\partial(G_k)$ is even. \proof{Distance remains or increases by two}
   edges of current $G_j$.
 \end{itemize}
 
+
+\section{Straighline Drawings, Schnyder-Woods}
+
+\paragraph{\ild{Convex combination}} of points $p_1, ..., p_3$ is a linear
+combination $v_1 p_1 + v_2 p_2 + v_3 p_3$ s.t. $v_1 + v_2 + v_3= 1$ \iln{(point
+  lies in triangle)}.
+
+\paragraph{\iln{Note}} In a triangulated graph, boundary of outer face is a triangle.
+
+\paragraph{\ild{Barycentric representation}} of a graph is an injective map $v
+\in V \mapsto (v_1, v_2, v_3) \in \rr^3$  with
+\begin{itemize}
+\item $v_1 + v_2 + v_3 = 1$ (convex combination)
+\item for $\{u,v\} \in E$ and $w \in V \backslash \{u,v\}$ there ex. $k \in
+  \{1,2,3\}$ with $u_k < w_k$ and $v_k < w_k$
+\end{itemize}
+It is \ild{weak} if
+\begin{align*}
+  (u_k, u_{k+1}) <_{\text{lex}} (w_k, w_{k+1}) ~\land~ (v_k, v_{k+1}) <_{\text{lex}} (w_k, w_{k+1}) ~~ \mod 3
+\end{align*}
+\iln{If two coefficients are equal, then the next one must be strictly smaller}
+
+% image: 09-3-8.png
+
+\paragraph{\thm{Thm}} Let $v \mapsto (v_1, v_2, v_3)$ be a weak barycentric
+representation of $G$, $(p_1, p_2, p_3)$ a triangle. Then,
+\begin{align*}
+  v \in V \mapsto v_1 p_1 + v_2 p_3 + v_3 p_3
+\end{align*}
+yields a planar straightline drawing of $G$.
+
+\paragraph{\ild{\textsc{SW}-Partition}} partition of the inner edges into three
+disjoint oriented classes $T_1$, $T_2$, $T_n$ so that each is an
+upwards-directed tree rooted at $v_1, v_2, v_n$ resp.; and have specific order
+of edges around inner vertices as pictured. \textbf{Computation}: In a canonical
+ordering, let the leftmost (outermost) edge be blue, rightmost green, point
+downwards, others red pointing upwards. \textbf{Properties}:
+\begin{itemize}
+\item $T_1$ is rooted at 1, numbers from leaves to root decreasing
+\item $T_2$ rooted at 2, numbers decreasing
+\item $T_n$ numbers increasing
+\end{itemize}
+Indeed, such a partition also defines a canonical ordering (topological
+numbering of acyclic graph defined by trees. )
+
+% image: 09-5-21.png
+
+Given an inner vertex $v$, we have a red/blue/green path to the resp. root.
+These paths are disjoint \gray{ (involving red: increasing vs decreasing numbers;
+others: by ordering of edges around a vertex) } --- These paths divide the graph
+into three (closed, i.e. boundary also contained) regions (vertex sets).
+
+% image: 09-6-4
+
+\paragraph{\thm{Prop.}} The following mapping yields a barycentric representation
+\begin{align*}
+v_i := \frac{ |R_i(v) - P_{i-1}(v)|}{n-1}
+\end{align*}
+\iln{(subtract to not overcount vertices in boundaries, normalise s.t. convex
+  combination)}
+
+
+\paragraph{\thm{Cor}} Can compute straightline drawing in $(n-1) \times (n-1)$
+grid in linear time (\textsc{Schnyder-Woods} algorithm).
+
+
+\begin{enumerate}
+\item Triangulate Graph
+\item Draw within triangle $p_1=(0,0)$, $p_2=(n-1, 0)$, $p_3=(0, n-1)$
+  \iln{(enables integer coordinates, cf. above)}
+\item Compute SW-decomposition $T_1, T_2, T_3$
+\item Draw an inner vertex $v$ at $(|R_2(v)| - |P_1(v)|,~ |R_3(v)| - |P_2(v)|)$
+\end{enumerate}
 
 
 
